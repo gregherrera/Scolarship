@@ -1,0 +1,130 @@
+﻿@page
+@model WebApp.EditModel
+
+@{
+    ViewData["Title"] = "Editar";
+}
+
+@{
+    if (Model.Accion_Update)
+    {
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #5bc0de;">
+                        <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Editar pa&iacute;s</h4>
+                    </div>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input type="hidden" asp-for="Pais.Id" />
+                                <input type="hidden" asp-for="Pais.Bandera" />
+                                <input type="hidden" asp-for="Pais.Creado_Por" />
+                                <input type="hidden" asp-for="Pais.Creado_En" />
+
+                                <div class="col-md-12 form-group">
+                                    <label asp-for="Pais.Descripcion" class="control-label"></label>
+                                    <input asp-for="Pais.Descripcion" class="form-control" id="Descripcion" />
+                                    <span asp-validation-for="Pais.Descripcion" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-12 form-group">
+                                    <input type="button" id="loadFile" value="Cambiar bandera" onclick="document.getElementById('file').click();" class="btn btn-default" />
+                                    <input type="file" style="display:none;" id="file" name="file" />
+                                    @{
+                                        if (Model.Pais.Bandera != null)
+                                        {
+                                            <img src="data:image;base64, @System.Convert.ToBase64String(Model.Pais.Bandera)" />
+                                        }
+                                        else
+                                        {
+                                            <img src="" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="background-color: #f9f9f9;">
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <button id="btn_cancel" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+                                    <button id="btn_guardar" type="submit" class="btn btn-info btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@* Esto será el view que se mostrará al usuario que no tenga privilegio de editar en la tabla paises *@
+<div class="modal fade" id="noUpdate" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes priveligio de escritura</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene permiso de escritura para modificar registros.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_guardar" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            //Si no tiene privilegio de escritura
+            if (document.getElementById("myModal") == null) {
+                $("#noUpdate").modal({ backdrop: "static" });
+
+                $(".btnclose").click(
+                    function () { window.history.back }
+                );
+            }
+            else {
+                $("#myModal").modal({ backdrop: "static" });
+                $("#myModal").on("shown.bs.modal", function () {
+                    $("#Descripcion").focus();
+                });
+
+                $("#file").change(function () {
+                    $this = $(this);
+                    // If the selection is empty, reset it
+                    if ($this.val().length == 0) {
+                        $("#loadFile").val("Cambiar bandera");
+                    } else {
+                        $("#loadFile").val($this.val().split("\\").pop());
+                    }
+                });
+
+                //Si no tiene privilegio de lectura
+                if (document.getElementById('dvRead') == null) {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./" }
+                    );
+                }
+                else {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./Index" }
+                    );
+                }
+            }
+        });
+    </script>
+}

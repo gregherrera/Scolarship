@@ -1,0 +1,133 @@
+﻿@page
+@model WebApp.DetailsModel
+
+@{
+    ViewData["Title"] = "Visualizar";
+}
+
+@{ 
+    if (Model.Accion_Select)
+    {
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #5bc0de;">
+                        <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-zoom-in"></span> Detalle pa&iacute;s</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <label asp-for="Pais.Descripcion" class="control-label"></label>
+                                <input asp-for="Pais.Descripcion" class="form-control" readonly="readonly"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label" id="creado_por">Creado por</label>
+                                <input type="text" class="form-control" value="@Model.Usuario_Crea" readonly="readonly"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label asp-for="Pais.Creado_En" class="control-label">Creado en</label>
+                                <input asp-for="Pais.Creado_En" class="form-control" readonly="readonly" />
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">Modificado por</label>
+                                <input type="text" class="form-control" value="@Model.Usuario_Modifica" id="Pais_Actualizado_Por" readonly="readonly"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label class="control-label">Modificado en</label>
+                                <input asp-for="Pais.Actualizado_En" class="form-control" readonly="readonly"/>
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label asp-for="Pais.Bandera" class="control-label"></label>
+                                @{
+                                    if (Model.Pais.Bandera != null)
+                                    {
+                                        <img src="data:image;base64, @System.Convert.ToBase64String(Model.Pais.Bandera)" />
+                                    }
+                                    else
+                                    {
+                                        <img src="" />
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="background-color: #f9f9f9;">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <button id="btn_cancel" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@* Esto será el view que se mostrará al usuario que no tenga privilegio de editar en la tabla paises *@
+<div class="modal fade" id="noSelect" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes priveligio de escritura</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene permiso para visualizar registros.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_guardar" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{ //Este view se mostrará si el usuario tiene privilegio de lectura en la tabla Paises
+    if (Model.Accion_Select)
+    {
+        <div id="dvRead" style="display:none;"></div>
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            //Si no tiene privilegio de consulta
+            if (document.getElementById('myModal') == null) {
+                $("#noSelect").modal({ backdrop: "static" });
+
+                $(".btnclose").click(
+                    function () { window.location.href = "/" }
+                );
+            }
+            else {
+                if (document.getElementById("Pais_Actualizado_Por").value == "") {
+                    document.getElementById("Pais_Actualizado_En").type = "text";
+                    document.getElementById("Pais_Actualizado_En").value = "";
+                }
+
+                $("#myModal").modal({ backdrop: "static" });
+                //Si no tiene privilegio de lectura
+                if (document.getElementById('dvRead') == null) {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./" }
+                    );
+                }
+                else {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./Index" }
+                    );
+                }
+            }
+        });
+    </script>
+}

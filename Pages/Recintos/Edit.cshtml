@@ -1,0 +1,224 @@
+﻿@page
+@model WebApp.Pages.Recintos.EditModel
+
+@{
+    ViewData["Title"] = "Editar Recinto";
+}
+
+@{
+    if (Model.Accion_Update)
+    {
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #5bc0de;">
+                        <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Editar Recinto</h4>
+                    </div>
+                    <form method="post" enctype="multipart/form-data">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input type="hidden" asp-for="Recinto.Id" />
+                                <input type="hidden" asp-for="Recinto.Creado_Por" />
+                                <input type="hidden" asp-for="Recinto.Creado_En" />
+
+                                <div class="col-lg-6 form-group">
+                                    <label asp-for="Recinto.Descripcion" class="control-label"></label>
+                                    <input asp-for="Recinto.Descripcion" class="form-control" id="Descripcion" />
+                                    <span asp-validation-for="Recinto.Descripcion" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <label asp-for="Recinto.Telefono" class="control-label"></label>
+                                    <input asp-for="Recinto.Telefono" class="form-control" id="Telefono" />
+                                    <span asp-validation-for="Recinto.Telefono" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6" form-group">
+                                    <label asp-for="Recinto.Correo_Electronico" class="control-label"></label>
+                                    <input type="email" asp-for="Recinto.Correo_Electronico" class="form-control" />
+                                    <span asp-validation-for="Recinto.Correo_Electronico" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6" form-group">
+                                    <label asp-for="Recinto.Lema" class="control-label"></label>
+                                    <input asp-for="Recinto.Lema" class="form-control" />
+                                    <span asp-validation-for="Recinto.Lema" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6" form-group">
+                                    <label asp-for="Recinto.RNC" class="control-label"></label>
+                                    <input asp-for="Recinto.RNC" class="form-control" />
+                                    <span asp-validation-for="Recinto.RNC" class="text-danger"></span>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <label class="control-label">Provincia</label>
+                                    <select class="form-control" id="cb_provincia" name="cb_provincia" asp-items="ViewBag.Provincias">
+                                        <option value="0">Seleccione una Provincia</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <label class="control-label">Municipio</label>
+                                    <select class="form-control" id="cb_municipio" name="cb_municipio" asp-items="ViewBag.Municipios">
+                                        <option value="0">Seleccione un Municipio</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <label class="control-label">Sector</label>
+                                    <select class="form-control" id="cb_sector" name="cb_sector" asp-items="ViewBag.Sectores">
+                                        <option value="0">Seleccione un sector</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6 form-group">
+                                    <label class="control-label">Barrio</label>
+                                    <select asp-for="Recinto.Id_Barrio" class="form-control" asp-items="ViewBag.Barrios" id="cb_barrio">
+                                        <option value="0">Seleccione un Barrio</option>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6" form-group">
+                                    <label class="control-label">Logo</label><br />
+                                    <input type="button" id="loadFile" value="Cambiar Logo" onclick="document.getElementById('file').click();" class="btn btn-default" />
+                                    <input type="file" style="display:none;" id="file" name="file" />
+                                    @{
+                                        if (Model.Recinto.Logo != null)
+                                        {
+                                            <img src="data:image;base64, @System.Convert.ToBase64String(Model.Recinto.Logo)" />
+                                        }
+                                        else
+                                        {
+                                            <img src="" />
+                                        }
+                                    }
+                                </div>
+                                <div class="col-lg-12 form-group">
+                                    <label asp-for="Recinto.Direccion" class="control-label"></label>
+                                    <input asp-for="Recinto.Direccion" class="form-control" />
+                                    <span asp-validation-for="Recinto.Direccion" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="background-color: #f9f9f9;">
+                            <div class="row">
+                                <div class="col-lg-12 form-group">
+                                    <button id="btn_cancel" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+                                    <button id="btn_guardar" type="submit" class="btn btn-info btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Guardar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@* Esto será el view que se mostrará al usuario que no tenga privilegio de editar en la tabla paises *@
+<div class="modal fade" id="noUpdate" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes priveligio de escritura</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene permiso de escritura para modificar registros.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_guardar" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script src="~/js/jquery.mask.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            if (document.getElementById("myModal") == null) {
+                $("#noUpdate").modal({ backdrop: "static" });
+
+                $(".btnclose").click(
+                    function () { window.history.back }
+                );
+            }
+            else {
+                $("#myModal").modal({ backdrop: "static" });
+                $("#myModal").on("shown.bs.modal", function () {
+                    $("#Descripcion").focus();
+                });
+
+                $("#Telefono").mask("(000) 000-0000");
+
+                $("#file").change(function () {
+                    $this = $(this);
+                    // If the selection is empty, reset it
+                    if ($this.val().length == 0) {
+                        $("#loadFile").val("Cambiar Logo");
+                    } else {
+                        $("#loadFile").val($this.val().split("\\").pop());
+                    }
+                });
+
+                $('#cb_provincia').change(function () {
+                    var ddl_Provincia = '#cb_provincia';
+
+                    $.getJSON('./Create?handler=Municipios', { Id_Provincia: $(ddl_Provincia).val() }, function (data) {
+                        $("#cb_municipio").empty();
+                        $("#cb_municipio").append('<option value="' + "0" + '">' + "Seleccione un Municipio" + '</option>');
+                        $.each(data, function (i, municipio) {
+                            $("#cb_municipio").append('<option value="' + municipio.value + '">' + municipio.text + '</option>');
+                        });
+                    });
+
+                    if ($(ddl_Provincia).val() == 0) {
+                        $("#cb_sector").empty();
+                        $("#cb_sector").append('<option value="' + "0" + '">' + "Seleccione un Sector" + '</option>');
+
+                        $("#cb_barrio").empty();
+                        $("#cb_barrio").append('<option value="' + "0" + '">' + "Seleccione un Barrio" + '</option>');
+                    };
+                });
+
+                $('#cb_municipio').change(function () {
+                    var ddl_Municipio = '#cb_municipio';
+
+                    $.getJSON('./Create?handler=Sectores', { Id_Municipio: $(ddl_Municipio).val() }, function (data) {
+                        $("#cb_sector").empty();
+                        $("#cb_sector").append('<option value="' + "0" + '">' + "Seleccione un Sector" + '</option>');
+                        $.each(data, function (i, sector) {
+                            $("#cb_sector").append('<option value="' + sector.value + '">' + sector.text + '</option>');
+                        });
+                    });
+
+                    if ($(ddl_Municipio).val() == 0) {
+                        $("#cb_barrio").empty();
+                        $("#cb_barrio").append('<option value="' + "0" + '">' + "Seleccione un Barrio" + '</option>');
+                    };
+                });
+
+                $('#cb_sector').change(function () {
+                    var ddl_Sector = '#cb_sector';
+
+                    $.getJSON('./Create?handler=Barrios', { Id_Sector: $(ddl_Sector).val() }, function (data) {
+                        $("#cb_barrio").empty();
+                        $("#cb_barrio").append('<option value="' + "0" + '">' + "Seleccione un Barrio" + '</option>');
+                        $.each(data, function (i, barrio) {
+                            $("#cb_barrio").append('<option value="' + barrio.value + '">' + barrio.text + '</option>');
+                        });
+                    });
+                });
+
+                $(".btnclose").click(
+                    function () {
+                        history.back();
+                    }
+                );
+            }
+        });
+    </script>}

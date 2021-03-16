@@ -1,0 +1,101 @@
+﻿@page
+@model WebApp.Pages.Recintos.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="close btnclose" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title">Confirme su acci&oacute;n</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <span class="glyphicon glyphicon-exclamation-sign"></span> De aceptar estar&iacute;as borrando el recinto acad&eacute;mico <b>@Model.Recinto.Descripcion</b>. ¿Deseas continuar?
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <form method="post">
+                        <input type="hidden" asp-for="Recinto.Id" />
+                        <div class="col-md-12 form-group">
+                            <button id="btn_cancel" type="submit" class="btn btn-info btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+                            <button id="btn_guardar" type="submit" class="btn btn-danger btn-primary"><span class="glyphicon glyphicon-trash"></span> Borrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            $("#myModal").modal({ backdrop: "static" });
+
+            $(".btnclose").click(
+                function () { window.location.href = "./Index" }
+            );
+        });
+    </script>
+}
+
+@*<h2>Delete</h2>
+
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>Recinto</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.Descripcion)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.Descripcion)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.Creado_En)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.Creado_En)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.Actualizado_En)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.Actualizado_En)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.Pais)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.Pais.Descripcion)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.UsuarioCrea)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.UsuarioCrea.Id)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Recinto.UsuarioModifica)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Recinto.UsuarioModifica.Id)
+            </dd>
+        </dl>
+
+        <form method="post">
+            <input type="hidden" asp-for="Recinto.Id" />
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            <a asp-page="./Index">Back to List</a>
+        </form>
+    </div>*@

@@ -1,0 +1,70 @@
+﻿@page
+@model WebApp.Pages.SeleccionarRecinto.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    .btn, .btn-link, .navbar-link, 
+    .btn:link, .btn-link:link, .navbar-link:link, 
+    .btn:hover, .btn-link:hover, .navbar-link:hover, 
+    .btn:visited, .btn-link:visited, .navbar-link:visited, 
+    .btn:active, .btn-link:active, .navbar-link:active {
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <form method="post">
+                    <button type="submit" asp-controller="Account" asp-action="Logout" class="close">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-flag"></span> Seleccione un Recinto</h4>
+                </form>
+            </div>
+            <form method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 form-group">
+                            @foreach (var item in Model.Recintos)
+                            {
+                                <div class="w3-card-4 w3-center">
+                                    <header class="w3-container w3-dark-gray w3-center">
+                                        <button asp-route-id="@item.Id_Recinto" asp-route-returnUrl="@Model.ReturnUrl" type="submit" value="" class="btn btn-link navbar-link"><h4>@item.Recinto.Descripcion</h4></button>
+                                    </header>
+
+                                    @if (item.Recinto.Logo != null)
+                                    {
+                                        <div class="w3-container w3-center">
+                                            <button asp-route-id="@item.Id_Recinto" asp-route-returnUrl="@Model.ReturnUrl" type="submit" class="btn btn-link navbar-btn navbar-link"><img src="data:image;base64, @System.Convert.ToBase64String(item.Recinto.Logo)" class="w3-center"></button>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color: #f9f9f9;">
+                    <button type="submit" asp-controller="Account" asp-action="Logout" id="btn_cancel" class="btn btn-block btn-info btnclose"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    $(document).ready(function () {
+        $("#myModal").modal({ backdrop: "static" });
+        $("#lnkPais").click(function () {
+            $(this).form[0].submit();
+        });
+    });
+</script>
+}

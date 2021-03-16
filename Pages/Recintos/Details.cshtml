@@ -1,0 +1,126 @@
+﻿@page
+@model WebApp.Pages.Recintos.DetailsModel
+
+@{
+    ViewData["Title"] = "";
+}
+
+@if (Model.Accion_Select)
+{
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #5bc0de;">
+                    <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                    <h4 class="modal-title"><span class="glyphicon glyphicon-edit"></span> Detalle Recinto</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6 form-group">
+                            <label asp-for="Recinto.Descripcion" class="control-label"></label>
+                            <input asp-for="Recinto.Descripcion" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label asp-for="Recinto.Telefono" class="control-label"></label>
+                            <input asp-for="Recinto.Telefono" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Provincia</label>
+                            <input type="text" name="Provincia" class="form-control" readonly="readonly" value="@Model.Provincia" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Municipio</label>
+                            <input type="text" name="Municipio" class="form-control" readonly="readonly" value="@Model.Municipio" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Sector</label>
+                            <input type="text" name="Sector" class="form-control" readonly="readonly" value="@Model.Sector" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Barrio</label>
+                            <input type="text" name="Barrio" class="form-control" readonly="readonly" value="@Model.Barrio" />
+                        </div>
+                        <div class="col-lg-12 form-group">
+                            <label asp-for="Recinto.Direccion" class="control-label"></label>
+                            <input asp-for="Recinto.Direccion" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label" id="creado_por">Creado por</label>
+                            <input type="text" class="form-control" readonly="readonly" value="@Model.Usuario_Crea" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label asp-for="Recinto.Creado_En" class="control-label">Creado en</label>
+                            <input asp-for="Recinto.Creado_En" class="form-control" readonly="readonly" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Modificado por</label>
+                            <input type="text" class="form-control" readonly="readonly" value="@Model.Usuario_Modifica" id="Recinto_Actualizado_Por" />
+                        </div>
+                        <div class="col-lg-6 form-group">
+                            <label class="control-label">Modificado en</label>
+                            <input asp-for="Recinto.Actualizado_En" class="form-control" readonly="readonly" placeholder="" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="background-color: #f9f9f9;">
+                    <div class="row">
+                        <div class="col-lg-12 form-group">
+                            <button id="btn_cancel" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Esto será el view que se mostrará al usuario que no tenga privilegio de editar en la tabla paises *@
+<div class="modal fade" id="noSelect" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes priveligio de lectura</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene asignado permiso de lectura.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_cerrar" type="submit" class="btn btn-success btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            //Si no tiene privilegio de escritura
+            if (document.getElementById('myModal') == null) {
+                $("#noSelect").modal({ backdrop: "static" });
+            }
+            else {
+                if (document.getElementById("Recinto_Actualizado_Por").value == "") {
+                    document.getElementById("Recinto_Actualizado_En").type = "text";
+                    document.getElementById("Recinto_Actualizado_En").value = "";
+                }
+
+                $("#myModal").modal({ backdrop: "static" });
+            }
+
+            $(".btnclose").click(
+                function () {
+                    history.back();
+                }
+            );
+        });
+    </script>
+}

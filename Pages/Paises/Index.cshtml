@@ -1,0 +1,119 @@
+﻿@page
+@model WebApp.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@{
+    //Este view se mostrará si el usuario tiene privilegio de lectura la tabla Paises
+    if (Model.Accion_Select)
+    {
+        <h2>Listado de paises</h2>
+
+        <p>
+            @{
+                if (Model.Accion_Insert)
+                {
+                    <a asp-page="Create" class="btn btn-info">Crear Pa&iacute;s</a>
+                }
+            }
+        </p>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Pais[0].Descripcion)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Pais[0].Bandera)
+                    </th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Pais)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Descripcion)
+                        </td>
+                        <td>
+                            @{
+                                if (item.Bandera != null)
+                                {
+                                    <img src="data:image;base64, @System.Convert.ToBase64String(item.Bandera)" />
+                                }
+                                else
+                                {
+                                    <img src="" />
+                                }
+                            }
+                        </td>
+                        <td>
+                            @{if (Model.Accion_Update)
+                                {
+                                    <a asp-page="./Edit" asp-route-id="@item.Id" title="Editar"><span class="glyphicon glyphicon-edit" style="vertical-align:middle;"></span></a>
+                                    if (Model.Accion_Select)
+                                    {
+                                        <span> | </span>
+                                    }
+                                }
+                            }
+
+                            <a asp-page="./Details" asp-route-id="@item.Id" title="Detalle"><span class="glyphicon glyphicon-eye-open" style="vertical-align:middle;"></span></a>
+
+                            @{if (Model.Accion_Delete)
+                                {
+                                    <span> | </span><a asp-page="./Delete" asp-route-id="@item.Id" title="Borrar"><span class="glyphicon glyphicon-trash" style="vertical-align:middle;"></span></a>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}
+
+@* Este será el view que se mostrará al usuario que no tenga permiso de lectura *@
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes permiso de consulta</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene asignado permiso de consulta.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_guardar" type="submit" class="btn btn-info btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-floppy-disk"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            //Si no se renderiza la tabla, es porque no tiene permiso de lectura
+            if (document.getElementsByClassName('table').length == 0) {
+                $("#myModal").modal({ backdrop: "static" });
+
+                $(".btnclose").click(
+                    function () { window.location.href = "/" }
+                );
+            }
+        });
+    </script>
+}

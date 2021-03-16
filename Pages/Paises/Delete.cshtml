@@ -1,0 +1,103 @@
+﻿@page
+@model WebApp.DeleteModel
+
+@{
+    ViewData["Title"] = "";
+}
+
+@{
+    if (Model.Accion_Delete)
+    {
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #5bc0de;">
+                        <button type="button" class="close btnclose" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                        <h4 class="modal-title">Confirme su acci&oacute;n</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12 form-group">
+                                <span class="glyphicon glyphicon-exclamation-sign"></span> De aceptar estar&iacute;as borrando el pa&iacute;s <b>@Model.Pais.Descripcion</b>. ¿Deseas continuar?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="background-color: #f9f9f9;">
+                        <div class="row">
+                            <form method="post">
+                                <input type="hidden" asp-for="Pais.Id" />
+                                <div class="col-md-12 form-group">
+                                    <button id="btn_cancel" type="submit" class="btn btn-info btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cancelar</button>
+                                    <button id="btn_guardar" type="submit" class="btn btn-danger btn-primary"><span class="glyphicon glyphicon-trash"></span> Borrar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@* Esto será el view que se mostrará al usuario que no tenga privilegio para borrar en la tabla de paises *@
+<div class="modal fade" id="noDelete" role="dialog">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #5bc0de;">
+                <button type="button" class="btnclose close" data-dismiss="modal" data-target="#btn_cancel">&times;</button>
+                <h4 class="modal-title"><span class="glyphicon glyphicon-alert"></span> No tienes priveligio de escritura</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Usted no tiene permiso de escritura para eliminar registros.
+                </p>
+            </div>
+            <div class="modal-footer" style="background-color: #f9f9f9;">
+                <div class="row">
+                    <div class="col-md-12 form-group">
+                        <button id="btn_guardar" type="submit" class="btn btn-info btnclose" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@{ //Este view se mostrará si el usuario tiene privilegio de lectura en la tabla Paises
+    if (Model.Accion_Select)
+    {
+        <div id="dvRead" style="display:none;"></div>
+    }
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+            //Si no tiene privilegio de escritura
+            if (document.getElementById('myModal') == null) {
+                $("#noDelete").modal({ backdrop: "static" });
+
+                $(".btnclose").click(
+                    function () { window.location.href = "/" }
+                );
+            }
+            else {
+                $("#myModal").modal({ backdrop: "static" });
+
+                //Si no tiene privilegio de lectura
+                if (document.getElementById('dvRead') == null) {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./" }
+                    );
+                }
+                else {
+                    $(".btnclose").click(
+                        function () { window.location.href = "./Index" }
+                    );
+                }
+            }
+        });
+    </script>
+}
